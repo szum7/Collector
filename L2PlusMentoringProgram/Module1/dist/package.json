@@ -1,0 +1,20 @@
+{
+  "name": "Module2_JavascriptOverview",
+  "version": "1.0.0",
+  "description": "",
+  "main": "homework.js",
+  "scripts": {
+    "test": "npx mocha \"src/**/*.test.js\" --recursive --require @babel/register"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.7",
+    "@babel/register": "^7.14.5",
+    "chai": "^4.3.4",
+    "mocha": "^9.0.1",
+    "requires": "^1.0.2"
+  }
+}

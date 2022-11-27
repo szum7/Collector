@@ -1,0 +1,6 @@
+﻿o merge excel records into one excel file
+x write merged excel records to a txt (name of merged files; records)
+o read merged file with the additional columns
+o a plusz oszlopok mégis a sor végén lesznek, nem az elején - javítani az attributumok értékeit
+- HIBA nem zár le minden applikációt (task manager mutatja, hogy nyitva van az excel) - lehet én nem zárok le valamit
+- HIBA összekeverednek az adatok a merged fájlban, rossz érték rossz oszlopba kerül

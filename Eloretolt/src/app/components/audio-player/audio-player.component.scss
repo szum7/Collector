@@ -1,0 +1,59 @@
+@import "../../utilities/variables.scss";
+
+$timeWidth: 130;
+$volumeWidth: 100;
+$height: 38;
+$btnWidth: 40;
+
+.track{
+    background:#{$laneBg};
+}
+.section{
+    vertical-align: top;
+    display: inline-block;
+    height: #{$height + 'px'};
+}
+.section p{
+    margin:0;
+    padding:0;
+    padding-top:6px;
+}
+.btn{
+    cursor:pointer;
+    margin:0;
+    border-radius:0;
+}
+.time{
+    width: #{$timeWidth + 'px'};
+    text-align: center;    
+}
+.progress-lane{
+    color:#{$titleFg};
+    position: relative;
+    width: calc(100% - #{($timeWidth + ($btnWidth * 2) + 8 + $volumeWidth) + 'px'});
+}
+.progress-lane .title{
+    position: absolute;
+    z-index: 1;
+    top:0;
+    left:20px;
+    bottom:0;
+    right:0;
+    pointer-events: none;
+}
+.section.volume{
+    width: #{$volumeWidth + 'px'};
+    padding:15px;
+}
+
+.track .btn{
+    background: #{$buttonBg};
+    color:#{$buttonFg};
+}
+.section.time{
+    background: #{$timeBg};
+    color:#{$timeFg};
+}
+.section.volume{
+    background:#{$volumeBg};
+}

@@ -1,0 +1,292 @@
+﻿
+            
+
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+
+#region Create COM objects
+Excel.Application xlApp = new Excel.Application();
+this.watch.Diff("Excel opened.");
+Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(path);
+this.watch.Diff("Excel file opened.");
+Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
+Excel.Range xlRange = xlWorksheet.UsedRange;
+#endregion
+
+...Program...
+
+#region Clean up COM objects
+// Cleanup
+GC.Collect();
+GC.WaitForPendingFinalizers();
+
+this.watch.Diff("GC cleanup init.");
+
+// Rule of thumb for releasing com objects:
+//  never use two dots, all COM objects must be referenced and released individually
+//  ex: [somthing].[something].[something] is bad
+
+// Release com objects to fully kill excel process from running in the background
+Marshal.ReleaseComObject(xlRange);
+this.watch.Diff("Marshal.ReleaseComObject(xlRange)");
+Marshal.ReleaseComObject(xlWorksheet);
+this.watch.Diff("Marshal.ReleaseComObject(xlWorksheet)");
+
+// Close and release
+xlWorkbook.Close();
+this.watch.Diff("xlWorkbook.Close()");
+Marshal.ReleaseComObject(xlWorkbook);
+this.watch.Diff("Marshal.ReleaseComObject(xlWorkbook)");
+
+// Quit and release
+xlApp.Quit();
+this.watch.Diff("xlApp.Quit()");
+Marshal.ReleaseComObject(xlApp);
+this.watch.Diff("Marshal.ReleaseComObject(xlApp)");
+Console.WriteLine();
+#endregion
+
+
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+
+
+            //Excel.Range xlRange = xlWorkSheet.UsedRange;
+            //xlRange.NumberFormat = "@";
+
+
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+
+
+//tr.AccountingDate = new DateTime(1900, 1, 1);
+//tr.AccountingDate = tr.AccountingDate.AddDays(double.Parse(xlRange.Cells[i, 1].Value2.ToString()) - 2);
+//tr.TransactionId = xlRange.Cells[i, 2].Value2.ToString();
+//tr.Type = xlRange.Cells[i, 3].Value2.ToString();
+//tr.Account = xlRange.Cells[i, 4].Value2.ToString();
+//tr.AccountName = xlRange.Cells[i, 5].Value2.ToString();
+//tr.PartnerAccount = xlRange.Cells[i, 6].Value2.ToString();
+//tr.PartnerName = xlRange.Cells[i, 7].Value2.ToString();
+//tr.Sum = decimal.Parse(xlRange.Cells[i, 8].Value2.ToString());
+//tr.Currency = xlRange.Cells[i, 9].Value2.ToString();
+//tr.Message = xlRange.Cells[i, 10].Value2.ToString();
+
+
+
+
+            int colCount = _xlRange.Columns.Count;
+
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+
+
+
+
+void Program2()
+{
+    this.watch.Timestamp("Program started");
+
+    this.InitFilePaths();
+
+    Transaction lastRow = null;
+    foreach (string path in this.FilePaths)
+    {
+        this.Read(ref lastRow, path);
+    }
+
+    Console.WriteLine($"Count is: {this.ExcelSheet.Transactions.Count}");
+
+    this.watch.Diff("Excel read finished.");
+    this.watch.Timestamp("Program finished");
+    watch.StopAll();
+    Console.ReadKey();
+}
+
+---
+
+void Read(ref Transaction lastRow, string path)
+{
+    //Create COM Objects. Create a COM object for everything that is referenced
+    Excel.Application xlApp = new Excel.Application();
+    Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(path);
+    Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
+    Excel.Range xlRange = xlWorksheet.UsedRange;
+
+    this.watch.Diff("OPENED new excel file.");
+
+    int rowCount = xlRange.Rows.Count;
+    int colCount = xlRange.Columns.Count;
+
+    int i = rowCount;
+
+    // Find first not empty row
+    while (i > 1 && (xlRange.Cells[i, 1] == null || xlRange.Cells[i, 1].Value2 == null)) i--;
+
+    // Find the first new date
+    DateTime? currentRowDate = null;
+    while (i > 1 && lastRow != null && (!currentRowDate.HasValue || currentRowDate < lastRow.AccountingDate))
+    {
+        currentRowDate = new DateTime(1900, 1, 1);
+        currentRowDate = currentRowDate.Value.AddDays(double.Parse(xlRange.Cells[i, 1].Value2.ToString()) - 2);
+        i--;
+    }
+
+    while (i > 1)
+    {
+        if (xlRange.Cells[i, 1] != null && xlRange.Cells[i, 1].Value2 != null)
+        {
+            currentRowDate = new DateTime(1900, 1, 1);
+            currentRowDate = currentRowDate.Value.AddDays(double.Parse(xlRange.Cells[i, 1].Value2.ToString()) - 2);
+
+            Transaction tr = new Transaction();
+
+            tr.AccountingDate = currentRowDate.Value;
+            tr.TransactionId = this.SetProperty<string>(xlRange.Cells[i, 2]);
+            tr.Type = this.SetProperty<string>(xlRange.Cells[i, 3]);
+            tr.Account = this.SetProperty<string>(xlRange.Cells[i, 4]);
+            tr.AccountName = this.SetProperty<string>(xlRange.Cells[i, 5]);
+            tr.PartnerAccount = this.SetProperty<string>(xlRange.Cells[i, 6]);
+            tr.PartnerName = this.SetProperty<string>(xlRange.Cells[i, 7]);
+            tr.Sum = this.SetProperty<decimal>(xlRange.Cells[i, 8]);
+            tr.Currency = this.SetProperty<string>(xlRange.Cells[i, 9]);
+            tr.Message = this.SetProperty<string>(xlRange.Cells[i, 10]);
+
+            // Add row if not already added
+            if (lastRow == null || currentRowDate != lastRow.AccountingDate || lastRow.ContentId != tr.ContentId)
+            {
+                this.ExcelSheet.AddNewRow();
+                this.ExcelSheet.SetLastRow(tr);
+            }
+
+            lastRow = tr;
+        }
+        i--;
+    }
+
+    this.watch.Diff("Properties read.");
+
+    //cleanup
+    GC.Collect();
+    GC.WaitForPendingFinalizers();
+
+    this.watch.Diff("GC ran.");
+
+    //rule of thumb for releasing com objects:
+    //  never use two dots, all COM objects must be referenced and released individually
+    //  ex: [somthing].[something].[something] is bad
+
+    //release com objects to fully kill excel process from running in the background
+    Marshal.ReleaseComObject(xlRange);
+    this.watch.Diff("Marshal.ReleaseComObject(xlRange)");
+    Marshal.ReleaseComObject(xlWorksheet);
+    this.watch.Diff("Marshal.ReleaseComObject(xlWorksheet)");
+
+    //close and release
+    xlWorkbook.Close();
+    this.watch.Diff("xlWorkbook.Close()");
+    Marshal.ReleaseComObject(xlWorkbook);
+    this.watch.Diff("Marshal.ReleaseComObject(xlWorkbook)");
+
+    //quit and release
+    xlApp.Quit();
+    this.watch.Diff("xlApp.Quit()");
+    Marshal.ReleaseComObject(xlApp);
+    this.watch.Diff("Marshal.ReleaseComObject(xlApp)");
+
+    Console.WriteLine("");
+}
+
+
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+
+
+
+			
+        void Program2(bool IsExcelOriginal = true)
+        {
+            //Create COM Objects. Create a COM object for everything that is referenced
+            Excel.Application xlApp = new Excel.Application();
+            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(@"C:\Users\Aron_Szocs\Documents\Bank\szamlatortenet_20141125_20150223.xls");
+            Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
+            Excel.Range xlRange = xlWorksheet.UsedRange;
+
+            int rowCount = xlRange.Rows.Count;
+            int colCount = xlRange.Columns.Count;
+            DateTime? lastDate = null;
+            Transaction lastRow = null;
+
+            for (int i = rowCount; i > 1; i--)
+            {
+                if (xlRange.Cells[i, 1] != null && xlRange.Cells[i, 1].Value2 != null)
+                {
+                    DateTime currentRowDate = new DateTime(1900, 1, 1);
+                    currentRowDate = currentRowDate.AddDays(double.Parse(xlRange.Cells[i, 1].Value2.ToString()) - 2);
+
+                    if (lastDate.HasValue)
+                    {
+                        if (currentRowDate < lastDate.Value)
+                        {
+                            continue;
+                        }
+                    }
+
+                    this.ExcelSheet.AddNewRow();
+                    Transaction tr = new Transaction(); //this.ExcelSheet.GetLastRow();
+
+                    tr.AccountingDate = currentRowDate;
+                    tr.TransactionId = this.SetProperty<string>(xlRange.Cells[i, 2]);
+                    tr.Type = this.SetProperty<string>(xlRange.Cells[i, 3]);
+                    tr.Account = this.SetProperty<string>(xlRange.Cells[i, 4]);
+                    tr.AccountName = this.SetProperty<string>(xlRange.Cells[i, 5]);
+                    tr.PartnerAccount = this.SetProperty<string>(xlRange.Cells[i, 6]);
+                    tr.PartnerName = this.SetProperty<string>(xlRange.Cells[i, 7]);
+                    tr.Sum = this.SetProperty<decimal>(xlRange.Cells[i, 8]);
+                    tr.Currency = this.SetProperty<string>(xlRange.Cells[i, 9]);
+                    tr.Message = this.SetProperty<string>(xlRange.Cells[i, 10]);
+
+                    if (!tr.IsTheSame(lastRow))
+                    {
+                        this.ExcelSheet.SetLastRow(tr);
+                        lastRow = tr;
+                    }
+
+                    lastDate = currentRowDate;
+                }
+            }
+
+            //cleanup
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            //rule of thumb for releasing com objects:
+            //  never use two dots, all COM objects must be referenced and released individually
+            //  ex: [somthing].[something].[something] is bad
+
+            //release com objects to fully kill excel process from running in the background
+            Marshal.ReleaseComObject(xlRange);
+            Marshal.ReleaseComObject(xlWorksheet);
+
+            //close and release
+            xlWorkbook.Close();
+            Marshal.ReleaseComObject(xlWorkbook);
+
+            //quit and release
+            xlApp.Quit();
+            Marshal.ReleaseComObject(xlApp);
+        }

@@ -1,0 +1,9 @@
+{
+  "numberOrItems": 1000,
+  "properties": [
+      { "name": "name", "type": "string" },
+      { "name": "city", "type": "string" },
+      { "name": "salary", "type": "number" }
+    ],
+  "propertiesToRunAgainst": ["name", "salary"]
+}

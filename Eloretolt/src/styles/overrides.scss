@@ -1,0 +1,47 @@
+@import "./../app/utilities/variables.scss";
+
+body .progress-lane .ui-slider.ui-slider-horizontal,
+body .progress-lane .ui-slider .ui-slider-handle{
+    height:38px;
+    border-radius:0;
+    border:none;
+}
+body .progress-lane .ui-slider.ui-slider-horizontal{
+    background:#{$laneBg};
+}
+body .progress-lane .ui-slider .ui-slider-handle{
+    border-radius:0;
+    background: #{$handleBg};
+}
+body .progress-lane .ui-slider.ui-slider-horizontal .ui-slider-handle{
+    top:8px;
+}
+body .progress-lane .ui-corner-all{
+    border-radius:0;
+}
+
+
+body .volume .ui-slider .ui-slider-handle{
+    border:none;
+    width:15px;
+    height:15px;
+    top:5px;
+    background: #{$volumeLaneFg};
+}
+body .volume .ui-slider .ui-slider-handle:hover,
+body .progress-lane .ui-slider .ui-slider-handle:hover{
+    border:none;
+}
+body .volume .ui-slider.ui-slider-horizontal{
+    height:8px;
+    border-radius: 15px;
+}
+body .volume .ui-slider .ui-slider-range{
+    border-radius: 15px;
+}
+body .volume .ui-slider{
+    background-color:#{$volumeLaneBg};
+}
+body .ui-slider .ui-slider-range{
+    background-color:#{$sliderColor};
+}

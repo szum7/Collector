@@ -1,0 +1,20 @@
+<div class="track" *ngIf="isInited">
+    <div class="section btns">
+        <div class="btn play" *ngIf="player.paused" (click)="play()">
+            <fa-icon icon="play"></fa-icon>
+        </div><div class="btn pause" *ngIf="!player.paused" (click)="pause()">
+            <fa-icon icon="pause"></fa-icon>
+        </div><div class="btn stop" (click)="stop()">
+            <fa-icon icon="stop"></fa-icon>
+        </div>
+    </div><div class="section volume">
+        <p-slider [min]="0" [max]="1" [step]="0.05" [(ngModel)]="player.volume"></p-slider>
+    </div><div class="section time current-time">
+        <p>{{currentTime}} / {{duration}}</p>
+    </div><div class="section progress-lane">
+        <p-slider [(ngModel)]="progressBar"></p-slider>
+        <div class="title">
+            <p>{{track.title}}</p>
+        </div>
+    </div>
+</div>

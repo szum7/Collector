@@ -1,0 +1,14 @@
+﻿----------------
+- FULL PROGRAM -
+----------------
+1. Read excel files exported from the bank
+-> Program creates merged file
+2. Open and edit merged file with IsOmitted (1|0), GroupId (number), TagIds (list of numbers)
+3. Read merged file
+-> Reads merged file
+-> Creates runnable SQL script to a .txt
+4. Delete from TRANSACTION database table
+5. Run generated scripts
+
+IMPORTANT
+- You have to know the ids of the tags you use. You have to check if there aren't any mismatch.

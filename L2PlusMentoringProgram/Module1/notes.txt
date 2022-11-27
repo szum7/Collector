@@ -1,0 +1,20 @@
+VS Code:
+ESLint
+Prettier
+Live Server
+
+npm init -y
+npm install --save-dev mocha chai
+
+npm install --save-dev @babel/core @babel/preset-env @babel/register
+
+unit tests:
+npx mocha "src/**/*.test.js" --recursive --require @babel/register
+package.json -> copy script above to scripts.test -> run "npm test"
+
+
+https://github.com/vadimg/js_bintrees/blob/e34c94d82a2632094d4f903cb5d1803373dc8dc2/dist/bintree.js#L258
+
+- gettert settert használni (isRed)
+- patterns
+- tests

@@ -1,0 +1,43 @@
+﻿dátum		név			összeg	csoport ID	tag IDs
+2019.09.11	Ennivaló	-1200	1			13, 55
+2019.09.12	Ruha		-20000				28, 30, 31
+2019.09.12	Ennivaló	-250	1	
+
+=> 
+dátum		név			összeg		tag IDs
+2010.09.12	Ruha		-20000		28, 30, 31
+2010.09.30	Ennivaló	-1450		13, 55
+
+- Elég egyszer leírni csoportonként a tagID-kat
+- Csoportok mindig a hónap végére gyűlnek össze (?)
+- ! Egy bizonyos csoport ID mindig egy bizonyos kategóriát jelent: pl.: ennivalót=1, utazás=2, ...
+
+// List of excel handling
+	.NET Framework
+		Microsoft.Office.Interop.Excel
+	.NET Core
+		DotNetCore.NPOI
+		DocumentFormat.OpenXml (buggy)
+
+USEFUL:
+-------
+
+// Add existing project to github
+https://help.github.com/en/articles/adding-an-existing-project-to-github-using-the-command-line
+
+// How to read excel file (.NET Core, Document.Format.OpenXml) (buggy, doesn't work with directly exported excel files)
+https://thecodebuzz.com/read-excel-file-in-dotnet-core-2-1/
+https://social.msdn.microsoft.com/Forums/en-US/b50aaf83-bdce-498f-b21f-3d3f120d039f/read-data-from-excel-in-net-core-using-microsoftofficeinteropexcel?forum=exceldev
+
+// How to read excel file (.NET Framework)
+https://coderwall.com/p/app3ya/read-excel-file-in-c
+
+// How to write to excel file (.NET Framework)
+http://csharp.net-informations.com/excel/csharp-create-excel.htm
+
+// Reading excel file (.NET Core, NPOI)
+https://www.talkingdotnet.com/import-export-excel-asp-net-core-2-razor-pages/
+
+// NPOI (DotNetCore.NPOI)
+https://github.com/dotnetcore/NPOI
+

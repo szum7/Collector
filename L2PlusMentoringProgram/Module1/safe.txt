@@ -1,0 +1,114 @@
+
+
+    const input1 = [
+        {"name": "D", "salary": 70000},
+        {"name": "H", "salary": 55},
+        {"name": "F", "salary": 1250},
+        {"name": "B", "salary": 500},
+        {"name": "G", "salary": 0},
+        {"name": "A", "salary": 1000},
+        {"name": "C", "salary": 2400},
+        {"name": "E", "salary": 55},
+    ];
+
+
+
+
+
+
+
+
+
+
+
+
+    import { BinaryTree } from "./BinaryTree.js";
+import { RedBlackBinaryTree } from "./RedBlackBinaryTree.js";
+import { RedBlueBinaryTree } from "./RedBlueBinaryTree.js";
+import { Utilities } from "./Utilities.js";
+
+let config;
+await fetch("./../config.json")
+    .then(response => response.json())
+    .then(data => config = data);
+
+const ITEM_NUMBER = 10000;
+
+const program = (function(comparator) {
+
+    let timer;
+    console.log(`The number of items is: ${ITEM_NUMBER}`);
+
+    // Input build
+    timer = Utilities.StopWatch("build input").start();
+    const input = [];
+    for (let i = 0; i < ITEM_NUMBER; i++) {
+        input.push(Utilities.GetRandomInputObj(config.properties));        
+    }
+    timer.stopAndShow();
+
+    console.log("");
+
+    let binaryTree = new BinaryTree(comparator);
+    let redBlackBinaryTree = new RedBlackBinaryTree(comparator);
+    let redBlueBinaryTree = new RedBlueBinaryTree(comparator);
+
+    // Inserts
+    timer = Utilities.StopWatch("binaryTree.performInsert").start();
+    input.forEach(item => {
+        binaryTree.performInsert(item);
+    }); 
+    timer.stopAndShow();
+
+    timer = Utilities.StopWatch("redBlackBinaryTree.performInsert").start();
+    input.forEach(item => {
+        redBlackBinaryTree.performInsert(item);
+    }); 
+    timer.stopAndShow();
+
+    timer = Utilities.StopWatch("redBlueBinaryTree.performInsert").start();
+    input.forEach(item => {
+        redBlueBinaryTree.performInsert(item);
+    }); 
+    timer.stopAndShow();
+
+    console.log("");
+
+    // OK TODO inkább az inordert mérni search helyett
+    // TODO config jsonbe rakni paramétereket, onnan olvasni
+    // TODO factory pattern
+
+    // Searches
+    timer = Utilities.StopWatch("binaryTree.inorder").start();
+    binaryTree.inorder(function(data){ ; });
+    timer.stopAndShow();
+    
+    timer = Utilities.StopWatch("redBlackBinaryTree.inorder").start();
+    redBlackBinaryTree.inorder(function(data){ ; });
+    timer.stopAndShow();
+
+    // Q? Miért változik ennyire a futási idő?
+    timer = Utilities.StopWatch("redBlueBinaryTree.inorder").start();
+    redBlueBinaryTree.inorder(function(data){ ; });
+    timer.stopAndShow();
+});
+
+let salaryComparator = (data1, data2) => {
+    if (data1.salary > data2.salary) {
+        return 1;
+    }
+    return data1.salary == data2.salary ? 0 : -1;    
+};
+
+let nameComparator = (data1, data2) => {
+    if (data1.name > data2.name) {
+        return 1;
+    }
+    return data1.name == data2.name ? 0 : -1;
+};
+
+console.log("Program with salaryComparator: ");
+program(salaryComparator);
+console.log("======================================");
+console.log("Program with nameComparator: ");
+program(nameComparator);
