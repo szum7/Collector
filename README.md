@@ -1,2 +1,2 @@
 # Collector
-A collection of various code projects.
+A collection of various smaller code projects.
