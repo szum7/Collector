@@ -1,0 +1,23 @@
+CREATE DATABASE chat CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+use chat;
+
+CREATE TABLE users (
+    id              BIGINT NOT NULL AUTO_INCREMENT,
+    nickname        VARCHAR(255) NOT NULL,
+    password        VARCHAR(500) NOT NULL,
+    isonline        BOOLEAN NOT NULL,
+    istyping        BOOLEAN NOT NULL,
+    lastactivity    TIMESTAMP NOT NULL,
+    color           VARCHAR(50) DEFAULT "#000",
+    UNIQUE (nickname),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB;
+
+CREATE TABLE comments (
+    id          BIGINT NOT NULL AUTO_INCREMENT,
+    comment     TEXT NOT NULL,
+    created     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    uid         BIGINT NOT NULL,
+    FOREIGN KEY (uid) REFERENCES users (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB;
